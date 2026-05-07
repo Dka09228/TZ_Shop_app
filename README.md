@@ -1,143 +1,79 @@
-# Interactive Product Catalog
+# Интерактивный каталог товаров
 
-A fullstack ecommerce catalog application with product browsing, filtering, search, cart management, and product comparison.
+Полноценное fullstack-приложение для просмотра каталога товаров с поиском, фильтрацией, корзиной и сравнением товаров.
 
-## Tech Stack
+Проект реализован как тестовое/техническое задание с использованием backend на FastAPI, frontend на Next.js и PostgreSQL в качестве базы данных. Все сервисы поднимаются через Docker Compose.
 
-**Backend:** Python · FastAPI · PostgreSQL · SQLAlchemy 2.x async · Alembic · Pydantic v2 · Uvicorn  
-**Frontend:** Next.js 14 · TypeScript · Tailwind CSS · React Hooks · react-hot-toast  
-**Infrastructure:** Docker · Docker Compose
+---
 
-## Features
+## Используемые технологии
 
-- Product catalog with grid layout
-- Full-text search with autocomplete suggestions
-- Filtering by category, price range
-- Sorting by price, name, rating
-- Pagination
-- Product detail pages
-- Shopping cart (session-based, stored in PostgreSQL)
-- Optimistic UI updates in cart
-- Product comparison (up to 4 products)
-- Toast notifications
-- Responsive mobile-first design
-- Loading skeletons & error states
+### Backend
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy 2.x async
+- Alembic
+- Pydantic v2
+- Uvicorn
 
-## Project Structure
+### Frontend
+- Next.js 14
+- TypeScript
+- Tailwind CSS
+- React Hooks
+- react-hot-toast
 
-```
+### Инфраструктура
+- Docker
+- Docker Compose
+
+---
+
+## Основной функционал
+
+В приложении реализованы:
+
+- просмотр каталога товаров в виде сетки;
+- поиск товаров по названию и описанию;
+- autocomplete-подсказки при поиске;
+- фильтрация товаров по категории;
+- фильтрация по диапазону цен;
+- сортировка по цене, названию и рейтингу;
+- пагинация списка товаров;
+- отдельная страница детального просмотра товара;
+- корзина товаров без авторизации пользователя;
+- хранение корзины в PostgreSQL по `session_id`;
+- оптимистичное обновление интерфейса при работе с корзиной;
+- сравнение до 4 товаров;
+- toast-уведомления;
+- адаптивная верстка под мобильные устройства;
+- состояния загрузки и обработки ошибок.
+
+---
+
+## Структура проекта
+
+```text
 project-root/
 ├── backend/
 │   ├── app/
-│   │   ├── api/routes/     # products.py, cart.py
-│   │   ├── core/           # config.py, database.py
-│   │   ├── models/         # product.py, cart.py
-│   │   ├── schemas/        # product.py, cart.py
-│   │   ├── services/       # product_service.py, cart_service.py
-│   │   ├── seed.py         # 46 demo products
-│   │   └── main.py
-│   ├── alembic/            # migrations
+│   │   ├── api/routes/     # маршруты API: products.py, cart.py
+│   │   ├── core/           # настройки проекта и подключение к БД
+│   │   ├── models/         # SQLAlchemy-модели
+│   │   ├── schemas/        # Pydantic-схемы
+│   │   ├── services/       # бизнес-логика
+│   │   ├── seed.py         # заполнение тестовыми товарами
+│   │   └── main.py         # точка входа backend-приложения
+│   ├── alembic/            # миграции базы данных
 │   ├── requirements.txt
 │   └── Dockerfile
 ├── frontend/
-│   ├── app/                # Next.js pages
-│   ├── components/         # React components
-│   ├── services/api.ts     # API client
-│   ├── utils/              # session, helpers
-│   ├── types/index.ts
+│   ├── app/                # страницы Next.js
+│   ├── components/         # React-компоненты
+│   ├── services/api.ts     # клиент для работы с API
+│   ├── utils/              # вспомогательные функции
+│   ├── types/index.ts      # TypeScript-типы
 │   └── Dockerfile
 ├── docker-compose.yml
 └── README.md
-```
-
-## Quick Start
-
-```bash
-docker compose up --build
-```
-
-Then open:
-- **Frontend:** http://localhost:3000
-- **Backend API:** http://localhost:8000
-- **Swagger Docs:** http://localhost:8000/docs
-
-## Environment Variables
-
-### Backend
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DATABASE_URL` | `postgresql+asyncpg://...` | PostgreSQL connection string |
-| `CORS_ORIGINS` | `["http://localhost:3000"]` | Allowed CORS origins |
-
-### Frontend
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend API URL |
-
-## Useful Commands
-
-```bash
-# Start all services
-docker compose up --build
-
-# Stop and remove volumes
-docker compose down -v
-
-# View backend logs
-docker compose logs -f backend
-
-# View frontend logs
-docker compose logs -f frontend
-
-# Run only backend
-docker compose up backend postgres
-
-# Rebuild a single service
-docker compose up --build backend
-```
-
-## API Documentation
-
-Full interactive API docs available at: **http://localhost:8000/docs**
-
-### Key Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/api/products/` | List products (with filters) |
-| GET | `/api/products/{id}/` | Product detail |
-| GET | `/api/products/categories/` | List categories |
-| GET | `/api/products/suggestions/` | Search autocomplete |
-| GET | `/api/cart/?session_id=` | Get cart |
-| POST | `/api/cart/` | Add item to cart |
-| PUT | `/api/cart/{item_id}/` | Update item quantity |
-| DELETE | `/api/cart/{item_id}/` | Remove item |
-| DELETE | `/api/cart/clear/` | Clear cart |
-| GET | `/health` | Health check |
-
-## Database Migrations
-
-Migrations run automatically on container startup via `alembic upgrade head`.
-
-To run manually:
-```bash
-docker compose exec backend alembic upgrade head
-```
-
-## Seed Data
-
-46 demo products across 6 categories are seeded automatically on first startup:
-- **Electronics** (10): phones, laptops, cameras, headphones
-- **Clothing** (8): jeans, shoes, jackets, t-shirts
-- **Books** (8): programming, fiction, self-help
-- **Home** (8): appliances, furniture, kitchen
-- **Sport** (6): shoes, trackers, yoga, fitness
-- **Beauty** (6): skincare, makeup, styling
-
-## Session-based Cart
-
-The cart is session-based (no authentication required):
-- On first visit, a UUID `session_id` is generated and stored in `localStorage`
-- All cart API requests include this `session_id`
-- Cart data is persisted in PostgreSQL
-- `localStorage` is only used for `session_id` and compare product IDs
